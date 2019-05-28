@@ -13,16 +13,6 @@
 
 
     <dependencies>
-
-        <!--
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>jenkins-core</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        -->
-
-
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>javax.servlet-api</artifactId>
@@ -88,7 +78,6 @@
             <artifactId>version-number</artifactId>
             <version>1.6</version>
         </dependency>
-
         <dependency>
             <groupId>org.kohsuke</groupId>
             <artifactId>access-modifier-annotation</artifactId>
@@ -99,7 +88,18 @@
             <version>1.8</version>
             <optional>true</optional>
         </dependency>
-
+        <dependency>
+            <groupId>com.google.inject</groupId>
+            <artifactId>guice</artifactId>
+            <exclusions>
+                <exclusion> <!-- TODO it seems to want Guava 16; apparently it manages to run against 11 -->
+                    <groupId>com.google.guava</groupId>
+                    <artifactId>guava</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
     </dependencies>
+
+
 
 </project>

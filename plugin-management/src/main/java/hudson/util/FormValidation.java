@@ -334,7 +334,7 @@ public abstract class FormValidation extends IOException implements HttpResponse
         // insufficient permission to perform validation?
         if(!Jenkins.getInstance().hasPermission(Jenkins.ADMINISTER)) return ok();
 
-        exe = fixEmpty(exe);
+        exe = Util.fixEmpty(exe);
         if(exe==null)
             return ok();
 
@@ -643,7 +643,7 @@ public abstract class FormValidation extends IOException implements HttpResponse
             if (names==null)    return null;
 
             if (checkUrl==null) {
-                StringBuilder buf = new StringBuilder(singleQuote(relativePath()));
+                StringBuilder buf = new StringBuilder(Util.singleQuote(relativePath()));
                 if (!names.isEmpty()) {
                     buf.append("+qs(this).addThis()");
 
@@ -657,7 +657,7 @@ public abstract class FormValidation extends IOException implements HttpResponse
 
             // put this under the right contextual umbrella.
             // 'a' in getCurrentDescriptorByNameUrl is always non-null because we already have Hudson as the sentinel
-            return '\'' + jsStringEscape(Descriptor.getCurrentDescriptorByNameUrl()) + "/'+" + checkUrl;
+            return '\'' + Functions.jsStringEscape(Descriptor.getCurrentDescriptorByNameUrl()) + "/'+" + checkUrl;
         }
 
         /**
@@ -673,7 +673,7 @@ public abstract class FormValidation extends IOException implements HttpResponse
             if (names==null)    return null;
 
             if (dependsOn==null)
-                dependsOn = join(names," ");
+                dependsOn = Util.join(names," ");
             return dependsOn;
         }
 

@@ -115,7 +115,7 @@ public abstract class DirScanner implements Serializable {
         }
 
         public void scan(File dir, FileVisitor visitor) throws IOException {
-            if(fixEmpty(includes)==null && excludes==null) {
+            if(Util.fixEmpty(includes)==null && excludes==null) {
                 // optimization
                 new Full().scan(dir,visitor);
                 return;

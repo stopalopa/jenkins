@@ -1001,12 +1001,12 @@ public class UpdateSite {
             this.compatibleSinceVersion = Util.intern(get(o,"compatibleSinceVersion"));
             this.minimumJavaVersion = Util.intern(get(o, "minimumJavaVersion"));
             this.requiredCore = Util.intern(get(o,"requiredCore"));
-            this.categories = o.has("labels") ? internInPlace((String[])o.getJSONArray("labels").toArray(EMPTY_STRING_ARRAY)) : null;
+            this.categories = o.has("labels") ? MemoryReductionUtil.internInPlace((String[])o.getJSONArray("labels").toArray(MemoryReductionUtil.EMPTY_STRING_ARRAY)) : null;
             JSONArray ja = o.getJSONArray("dependencies");
             int depCount = (int)(ja.stream().filter(IS_DEP_PREDICATE.and(IS_NOT_OPTIONAL)).count());
             int optionalDepCount = (int)(ja.stream().filter(IS_DEP_PREDICATE.and(IS_NOT_OPTIONAL.negate())).count());
-            dependencies = getPresizedMutableMap(depCount);
-            optionalDependencies = getPresizedMutableMap(optionalDepCount);
+            dependencies = MemoryReductionUtil.getPresizedMutableMap(depCount);
+            optionalDependencies = MemoryReductionUtil.getPresizedMutableMap(optionalDepCount);
 
             for(Object jo : o.getJSONArray("dependencies")) {
                 JSONObject depObj = (JSONObject) jo;

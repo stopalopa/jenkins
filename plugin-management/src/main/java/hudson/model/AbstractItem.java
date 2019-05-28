@@ -628,7 +628,7 @@ public abstract class AbstractItem extends Actionable implements Item, HttpDelet
      */
     @RequirePOST
     public synchronized void doSubmitDescription( StaplerRequest req, StaplerResponse rsp ) throws IOException, ServletException {
-        checkPermission(CONFIGURE);
+        checkPermission(Item.CONFIGURE);
 
         setDescription(req.getParameter("description"));
         rsp.sendRedirect(".");  // go to the top page
@@ -679,7 +679,7 @@ public abstract class AbstractItem extends Actionable implements Item, HttpDelet
      * from showing the stack trace. This
      */
     public void delete() throws IOException, InterruptedException {
-        checkPermission(DELETE);
+        checkPermission(Item.DELETE);
         boolean responsibleForAbortingBuilds = !ItemDeletion.contains(this);
         boolean ownsRegistration = ItemDeletion.register(this);
         if (!ownsRegistration && ItemDeletion.isRegistered(this)) {
@@ -717,7 +717,7 @@ public abstract class AbstractItem extends Actionable implements Item, HttpDelet
                     for (Executor e : c.getAllExecutors()) {
                         final WorkUnit workUnit = e.getCurrentWorkUnit();
                         final Executable executable = workUnit != null ? workUnit.getExecutable() : null;
-                        final SubTask subtask = executable != null ? getParentOf(executable) : null;
+                        final SubTask subtask = executable != null ? Executables.getParentOf(executable) : null;
                                 
                         if (subtask != null) {        
                             Item item = Tasks.getItemOf(subtask);
@@ -821,9 +821,9 @@ public abstract class AbstractItem extends Actionable implements Item, HttpDelet
      */
     @Restricted(NoExternalUse.class)
     public void writeConfigDotXml(OutputStream os) throws IOException {
-        checkPermission(EXTENDED_READ);
+        checkPermission(Item.EXTENDED_READ);
         XmlFile configFile = getConfigFile();
-        if (hasPermission(CONFIGURE)) {
+        if (hasPermission(Item.CONFIGURE)) {
             IOUtils.copy(configFile.getFile(), os);
         } else {
             String encoding = configFile.sniffEncoding();
@@ -857,7 +857,7 @@ public abstract class AbstractItem extends Actionable implements Item, HttpDelet
      * @since 1.473
      */
     public void updateByXml(Source source) throws IOException {
-        checkPermission(CONFIGURE);
+        checkPermission(Item.CONFIGURE);
         XmlFile configXmlFile = getConfigFile();
         final AtomicFileWriter out = new AtomicFileWriter(configXmlFile.getFile());
         try {
@@ -904,7 +904,7 @@ public abstract class AbstractItem extends Actionable implements Item, HttpDelet
      */
     @RequirePOST
     public void doReload() throws IOException {
-        checkPermission(CONFIGURE);
+        checkPermission(Item.CONFIGURE);
 
         // try to reflect the changes by reloading
         getConfigFile().unmarshal(this);

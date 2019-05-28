@@ -256,7 +256,7 @@ public class XStream2 extends XStream {
         // but before reflection-based one kicks in.
         registerConverter(new AssociatedConverterImpl(this), -10);
 
-        registerConverter(new BlacklistedTypesConverter(), PRIORITY_VERY_HIGH); // SECURITY-247 defense
+        registerConverter(new BlacklistedTypesConverter(), XStream.PRIORITY_VERY_HIGH); // SECURITY-247 defense
 
         registerConverter(new DynamicProxyConverter(getMapper()) { // SECURITY-105 defense
             @Override public boolean canConvert(Class type) {
@@ -265,7 +265,7 @@ public class XStream2 extends XStream {
             @Override public Object unmarshal(HierarchicalStreamReader reader, UnmarshallingContext context) {
                 throw new ConversionException("<dynamic-proxy> not supported");
             }
-        }, PRIORITY_VERY_HIGH);
+        }, XStream.PRIORITY_VERY_HIGH);
     }
 
     @Override

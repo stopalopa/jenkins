@@ -141,9 +141,9 @@ public abstract class Build <P extends Project<P,B>,B extends Build<P,B>>
 
         protected Result doRun(@Nonnull BuildListener listener) throws Exception {
             if(!preBuild(listener,project.getBuilders()))
-                return FAILURE;
+                return Result.FAILURE;
             if(!preBuild(listener,project.getPublishersList()))
-                return FAILURE;
+                return Result.FAILURE;
 
             Result r = null;
             try {
@@ -156,12 +156,12 @@ public abstract class Build <P extends Project<P,B>,B extends Build<P,B>>
                 for( BuildWrapper w : wrappers ) {
                     Environment e = w.setUp((AbstractBuild<?,?>)Build.this, launcher, listener);
                     if(e==null)
-                        return (r = FAILURE);
+                        return (r = Result.FAILURE);
                     buildEnvironments.add(e);
                 }
 
                 if(!build(listener,project.getBuilders()))
-                    r = FAILURE;
+                    r = Result.FAILURE;
             } catch (InterruptedException e) {
                 r = Executor.currentExecutor().abortResult();
                 // not calling Executor.recordCauseOfInterruption here. We do that where this exception is consumed.
@@ -176,7 +176,7 @@ public abstract class Build <P extends Project<P,B>,B extends Build<P,B>>
                     }                    
                 }
                 // WARNING The return in the finally clause will trump any return before
-                if (failed) return FAILURE;
+                if (failed) return Result.FAILURE;
             }
 
             return r;
@@ -184,9 +184,9 @@ public abstract class Build <P extends Project<P,B>,B extends Build<P,B>>
 
         public void post2(@Nonnull BuildListener listener) throws IOException, InterruptedException {
             if (!performAllBuildSteps(listener, project.getPublishersList(), true))
-                setResult(FAILURE);
+                setResult(Result.FAILURE);
             if (!performAllBuildSteps(listener, project.getProperties(), true))
-                setResult(FAILURE);
+                setResult(Result.FAILURE);
         }
 
         @Override

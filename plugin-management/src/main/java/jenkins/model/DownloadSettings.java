@@ -93,11 +93,11 @@ public final class DownloadSettings extends GlobalConfiguration implements Persi
         }
 
         @Override public long getRecurrencePeriod() {
-            return DAY;
+            return PeriodicWork.DAY;
         }
 
         @Override public long getInitialDelay() {
-            return Main.isUnitTest ? DAY : 0;
+            return Main.isUnitTest ? PeriodicWork.DAY : 0;
         }
 
         @Override protected void execute(TaskListener listener) throws IOException, InterruptedException {

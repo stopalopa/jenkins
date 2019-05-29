@@ -11,7 +11,14 @@
 
     <artifactId>plugin-management</artifactId>
 
+    <properties>
+        <access-modifier.version>1.14</access-modifier.version>
+        <access-modifier-annotation.version>${access-modifier.version}</access-modifier-annotation.version> <!-- differing only where needed for timestamped snapshots -->
+        <access-modifier-checker.version>${access-modifier.version}</access-modifier-checker.version>
+        <java.level>8</java.level>
 
+
+    </properties>
     <dependencies>
         <dependency>
             <groupId>javax.servlet</groupId>
@@ -48,9 +55,14 @@
         <dependency>
             <groupId>com.google.code.findbugs</groupId>
             <artifactId>annotations</artifactId>
+            <version>3.0.1</version> <!--made up -->
             <scope>provided</scope>
         </dependency>
-
+        <dependency>
+            <groupId>antlr</groupId>
+            <artifactId>antlr</artifactId>
+            <version>2.7.6</version>
+        </dependency>
 
         <dependency>
             <groupId>org.acegisecurity</groupId>
@@ -104,11 +116,117 @@
             </exclusions>
         </dependency>
 
-
-
+        <dependency>
+            <groupId>org.kohsuke</groupId>
+            <artifactId>access-modifier-annotation</artifactId>
+            <version>${access-modifier-annotation.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jvnet.hudson</groupId>
+            <artifactId>xstream</artifactId>
+            <version>1.4.7-jenkins-1</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>xmlpull</groupId>
+                    <artifactId>xmlpull</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>xpp3</groupId>
+                    <artifactId>xpp3_min</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
 
     </dependencies>
 
 
+
+
+    <build>
+        <plugins>
+        <plugin>
+        <groupId>org.kohsuke.stapler</groupId>
+        <artifactId>maven-stapler-plugin</artifactId>
+        <!-- version specified in grandparent pom -->
+        <configuration>
+            <fork>${staplerFork}</fork><!-- the source code is big enough now that otherwise it fails with OutOfMemoryError -->
+            <maxmem>128m</maxmem>
+        </configuration>
+        </plugin>
+            <plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>1.${java.level}</source>
+                    <target>1.${java.level}</target>
+                    <!-- default reuseCreated is more performant
+                    feel free to uncomment if you have any issues on your platform
+                    <compilerReuseStrategy>alwaysNew</compilerReuseStrategy>
+                    -->
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+
+    <reporting>
+        <plugins>
+            <plugin><!-- generate Jelly tag lib documentation -->
+                <groupId>org.kohsuke.stapler</groupId>
+                <artifactId>maven-stapler-plugin</artifactId>
+                <version>${maven-stapler-plugin.version}</version>
+                <configuration>
+                    <patterns>
+                        <pattern>/lib/.*</pattern>
+                    </patterns>
+                </configuration>
+            </plugin>
+            <plugin><!-- skip slow dependency analysis -->
+                <artifactId>maven-project-info-reports-plugin</artifactId>
+                <version>2.6</version>
+                <configuration>
+                    <dependencyLocationsEnabled>false</dependencyLocationsEnabled>
+                </configuration>
+            </plugin>
+        </plugins>
+    </reporting>
+
+
+    <profiles>
+    <profile>
+        <id>debug</id>
+        <activation>
+            <activeByDefault>true</activeByDefault>
+        </activation>
+    </profile>
+    <profile>
+        <id>release</id>
+        <build>
+            <plugins>
+                <plugin>
+                    <!--
+                      generate jelly taglib docs from src/main/resources.
+                      this is necessary in addition to the <reporting> configuration
+                      to get the results deployed.
+                    -->
+                    <groupId>org.kohsuke.stapler</groupId>
+                    <artifactId>maven-stapler-plugin</artifactId>
+                    <!-- version specified in grandparent pom -->
+                    <executions>
+                        <execution>
+                            <goals>
+                                <goal>jelly-taglibdoc</goal>
+                            </goals>
+                            <configuration>
+                                <patterns>
+                                    <pattern>/lib/.*</pattern>
+                                </patterns>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
+            </plugins>
+        </build>
+    </profile>
+    </profiles>
 
 </project>
